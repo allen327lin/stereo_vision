@@ -25,26 +25,70 @@ SOFTWARE.
 import numpy as np
 import cv2
 from undistortion import undistortion
+from show_histogram import show_histogram
 
-imgL = cv2.imread("./photos/14-28-55_left.png", 0)
-imgL = undistortion(imgL)
-imgR = cv2.imread("./photos/14-28-55_right.png", 0)
-imgR = undistortion(imgR)
+imgL = None
+imgR = None
+numDisparities = 16
+blockSize = 11
 
-# cv2.imshow('imgL', imgL)
-# cv2.imshow('imgR', imgR)
+def compute_disparity():
+    global imgL
+    global imgR
+    global numDisparities
+    global blockSize
 
-print(imgR.shape)
+    stereo = cv2.StereoBM_create(numDisparities=numDisparities, blockSize=blockSize)
+    disparity = stereo.compute(imgL, imgR)
 
-stereo = cv2.StereoBM_create(numDisparities=16, blockSize=11)
-disparity = stereo.compute(imgL, imgR)
+    # disparity_normalized = cv2.normalize(disparity, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    disparity_normalized = disparity
 
-print(disparity)
-print(disparity.min(), disparity.max(), type(disparity.max()))
+    anti_back = np.where(disparity_normalized > 200, imgL, 0)
 
-norm_image = cv2.normalize(disparity, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    cv2.imshow('disparity_normalized', disparity_normalized)
+    cv2.imwrite("./photos/disparity_normalized.png", disparity_normalized)
+    cv2.imwrite("./photos/anti_back.png", anti_back)
 
-cv2.imwrite("./photos/disparity_normalized.png", norm_image)
-# cv2.imshow('disparity_normalized', norm_image)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+    show_histogram(disparity, "disparity")
+    show_histogram(disparity_normalized, "disparity_normalized")
+
+    return [disparity, disparity_normalized]
+
+def change_numDisparities(val):
+    global numDisparities
+    # val * 16 = numDisparities
+    numDisparities = val * 16
+    compute_disparity()
+
+def change_blockSize(val):
+    global blockSize
+    # val * 2 + 1 = blockSize
+    blockSize = val * 2 + 1
+    compute_disparity()
+
+
+def main():
+    global imgL
+    global imgR
+    imgL = cv2.imread("./photos/14-28-55_left.png", 0)
+    imgR = cv2.imread("./photos/14-28-55_right.png", 0)
+    imgL = undistortion(imgL)
+    imgR = undistortion(imgR)
+
+    cv2.namedWindow('disparity_normalized', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('disparity_normalized', 1280, 780)
+
+    disparity, disparity_normalized = compute_disparity()
+
+    cv2.imshow('disparity_normalized', disparity_normalized)
+
+    cv2.createTrackbar('numDisparities', 'disparity_normalized', 1, 100, change_numDisparities)
+    cv2.createTrackbar('blockSize', 'disparity_normalized', 5, 100, change_blockSize)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    main()
