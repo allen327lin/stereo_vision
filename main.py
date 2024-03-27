@@ -31,20 +31,21 @@ imgL = None
 imgR = None
 numDisparities = 16
 blockSize = 11
+anti_back_threshold = 220
 
 def compute_disparity():
     global imgL
     global imgR
     global numDisparities
     global blockSize
+    global anti_back_threshold
 
     stereo = cv2.StereoBM_create(numDisparities=numDisparities, blockSize=blockSize)
     disparity = stereo.compute(imgL, imgR)
 
-    # disparity_normalized = cv2.normalize(disparity, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-    disparity_normalized = disparity
+    disparity_normalized = cv2.normalize(disparity, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
 
-    anti_back = np.where(disparity_normalized > 200, imgL, 0)
+    anti_back = np.where(disparity_normalized > anti_back_threshold, imgL, 0)
 
     cv2.imshow('disparity_normalized', disparity_normalized)
     cv2.imwrite("./photos/disparity_normalized.png", disparity_normalized)
@@ -67,17 +68,22 @@ def change_blockSize(val):
     blockSize = val * 2 + 1
     compute_disparity()
 
+def change_anti_back_threshold(val):
+    global anti_back_threshold
+    anti_back_threshold = val
+    compute_disparity()
+
 
 def main():
     global imgL
     global imgR
-    imgL = cv2.imread("./photos/14-28-55_left.png", 0)
-    imgR = cv2.imread("./photos/14-28-55_right.png", 0)
+    imgL = cv2.imread("./photos/44_left.png", 0)
+    imgR = cv2.imread("./photos/44_right.png", 0)
     imgL = undistortion(imgL)
     imgR = undistortion(imgR)
 
     cv2.namedWindow('disparity_normalized', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('disparity_normalized', 1280, 780)
+    cv2.resizeWindow('disparity_normalized', 1280, 820)
 
     disparity, disparity_normalized = compute_disparity()
 
@@ -85,6 +91,7 @@ def main():
 
     cv2.createTrackbar('numDisparities', 'disparity_normalized', 1, 100, change_numDisparities)
     cv2.createTrackbar('blockSize', 'disparity_normalized', 5, 100, change_blockSize)
+    cv2.createTrackbar('anti_back_threshold', 'disparity_normalized', 220, 255, change_anti_back_threshold)
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
