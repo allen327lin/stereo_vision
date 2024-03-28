@@ -56,19 +56,19 @@ def compute_disparity():
 
     return [disparity, disparity_normalized]
 
-def change_numDisparities(val):
+def update_numDisparities(val):
     global numDisparities
     # val * 16 = numDisparities
     numDisparities = val * 16
     compute_disparity()
 
-def change_blockSize(val):
+def update_blockSize(val):
     global blockSize
     # val * 2 + 1 = blockSize
     blockSize = val * 2 + 1
     compute_disparity()
 
-def change_anti_back_threshold(val):
+def update_anti_back_threshold(val):
     global anti_back_threshold
     anti_back_threshold = val
     compute_disparity()
@@ -89,9 +89,9 @@ def main():
 
     cv2.imshow('disparity_normalized', disparity_normalized)
 
-    cv2.createTrackbar('numDisparities', 'disparity_normalized', 1, 100, change_numDisparities)
-    cv2.createTrackbar('blockSize', 'disparity_normalized', 5, 100, change_blockSize)
-    cv2.createTrackbar('anti_back_threshold', 'disparity_normalized', 220, 255, change_anti_back_threshold)
+    cv2.createTrackbar('numDisparities', 'disparity_normalized', 1, 100, update_numDisparities)
+    cv2.createTrackbar('blockSize', 'disparity_normalized', 5, 100, update_blockSize)
+    cv2.createTrackbar('anti_back_threshold', 'disparity_normalized', 220, 255, update_anti_back_threshold)
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
