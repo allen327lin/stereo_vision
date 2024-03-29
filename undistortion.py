@@ -54,9 +54,9 @@ def undistortion(src):
 
 
 if __name__ == "__main__":
-    src = cv2.imread("./photos/14-28-55_left.png", 0)
+    src = cv2.imread("./photos/44_left.png", 0)
     dst = undistortion(src)
-    cv2.imwrite("./photos/14-28-55_left_undistorted.png", dst)
+    cv2.imwrite("./photos/44_left_undistorted.png", dst)
     cv2.imshow('dst', dst)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

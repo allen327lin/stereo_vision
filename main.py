@@ -24,6 +24,7 @@ SOFTWARE.
 
 import numpy as np
 import cv2
+import argparse
 from undistortion import undistortion
 from show_histogram import show_histogram
 
@@ -77,8 +78,21 @@ def update_anti_back_threshold(val):
 def main():
     global imgL
     global imgR
-    imgL = cv2.imread("./photos/44_left.png", 0)
-    imgR = cv2.imread("./photos/44_right.png", 0)
+
+    imgL_path = "./photos/44_left_downsized_0.2.png"
+    imgR_path = "./photos/44_right_downsized_0.2.png"
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-l", "--imgL_path", type=str, help="Left photo path")
+    parser.add_argument("-r", "--imgR_path", type=str, help="Right photo path")
+    args = parser.parse_args()
+    if args.imgL_path is not None:
+        imgL_path = args.imgL_path
+    if args.imgR_path is not None:
+        imgR_path = args.imgR_path
+
+    imgL = cv2.imread(imgL_path, 0)
+    imgR = cv2.imread(imgR_path, 0)
     imgL = undistortion(imgL)
     imgR = undistortion(imgR)
 

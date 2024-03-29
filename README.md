@@ -1,6 +1,13 @@
 # stereo_vision
+A project using "StereoBM" algorithm to analyze and remove the background of photos
 
-# License
+## Run
+Put your photos in `photos` folder and then run:
+```
+python3 main.py -l "./photos/left_photo.png" -r "./photos/right_photo.png"
+```
+
+## License
 MIT License
 
 Copyright (c) 2024 allen327lin

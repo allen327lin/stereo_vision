@@ -37,6 +37,6 @@ def show_histogram(img, title="plot"):
 
 
 if __name__ == "__main__":
-    file_name = "14-28-55_left.png"
+    file_name = "44_left.png"
     img = cv2.imread("./photos/" + file_name, 0)
     show_histogram(img, file_name)
