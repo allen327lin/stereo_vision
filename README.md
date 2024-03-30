@@ -1,5 +1,5 @@
 # stereo_vision
-A project using "StereoBM" algorithm to analyze and remove the background of photos
+A simple computer vision project using "StereoBM" algorithm to analyze and remove the background of photos
 
 ## Run
 Put your photos in `photos` folder and then run:
